@@ -1,0 +1,566 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>DoctorWkt/acwj: A Compiler Writing Journey</title><style>
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	opacity: 0.5;
+}
+
+.sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, KaiTi, STKaiTi, '华文楷体', KaiTi_GB2312, '楷体_GB2312', serif; }
+.mono { font-family: Nitti, 'Microsoft YaHei', '微软雅黑', monospace; }
+.pdf .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .code { font-family: Source Code Pro, 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, KaiTi, STKaiTi, '华文楷体', KaiTi_GB2312, '楷体_GB2312', serif, 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .mono { font-family: PT Mono, Nitti, 'Microsoft YaHei', '微软雅黑', monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.highlight-default {
+}
+.highlight-gray {
+	color: rgb(155,154,151);
+}
+.highlight-brown {
+	color: rgb(100,71,58);
+}
+.highlight-orange {
+	color: rgb(217,115,13);
+}
+.highlight-yellow {
+	color: rgb(223,171,1);
+}
+.highlight-teal {
+	color: rgb(15,123,108);
+}
+.highlight-blue {
+	color: rgb(11,110,153);
+}
+.highlight-purple {
+	color: rgb(105,64,165);
+}
+.highlight-pink {
+	color: rgb(173,26,114);
+}
+.highlight-red {
+	color: rgb(224,62,62);
+}
+.highlight-gray_background {
+	background: rgb(235,236,237);
+}
+.highlight-brown_background {
+	background: rgb(233,229,227);
+}
+.highlight-orange_background {
+	background: rgb(250,235,221);
+}
+.highlight-yellow_background {
+	background: rgb(251,243,219);
+}
+.highlight-teal_background {
+	background: rgb(221,237,234);
+}
+.highlight-blue_background {
+	background: rgb(221,235,241);
+}
+.highlight-purple_background {
+	background: rgb(234,228,242);
+}
+.highlight-pink_background {
+	background: rgb(244,223,235);
+}
+.highlight-red_background {
+	background: rgb(251,228,228);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(55, 53, 47, 0.6);
+	fill: rgba(55, 53, 47, 0.6);
+}
+.block-color-brown {
+	color: rgb(100,71,58);
+	fill: rgb(100,71,58);
+}
+.block-color-orange {
+	color: rgb(217,115,13);
+	fill: rgb(217,115,13);
+}
+.block-color-yellow {
+	color: rgb(223,171,1);
+	fill: rgb(223,171,1);
+}
+.block-color-teal {
+	color: rgb(15,123,108);
+	fill: rgb(15,123,108);
+}
+.block-color-blue {
+	color: rgb(11,110,153);
+	fill: rgb(11,110,153);
+}
+.block-color-purple {
+	color: rgb(105,64,165);
+	fill: rgb(105,64,165);
+}
+.block-color-pink {
+	color: rgb(173,26,114);
+	fill: rgb(173,26,114);
+}
+.block-color-red {
+	color: rgb(224,62,62);
+	fill: rgb(224,62,62);
+}
+.block-color-gray_background {
+	background: rgb(235,236,237);
+}
+.block-color-brown_background {
+	background: rgb(233,229,227);
+}
+.block-color-orange_background {
+	background: rgb(250,235,221);
+}
+.block-color-yellow_background {
+	background: rgb(251,243,219);
+}
+.block-color-teal_background {
+	background: rgb(221,237,234);
+}
+.block-color-blue_background {
+	background: rgb(221,235,241);
+}
+.block-color-purple_background {
+	background: rgb(234,228,242);
+}
+.block-color-pink_background {
+	background: rgb(244,223,235);
+}
+.block-color-red_background {
+	background: rgb(251,228,228);
+}
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="e49b42c0-ee8d-4a61-ae17-51cc2d707835" class="page sans"><header><h1 class="page-title">DoctorWkt/acwj: A Compiler Writing Journey</h1></header><div class="page-body"><p id="71fbe543-7dcc-4cc4-baab-81f5cb01e40d" class="block-color-gray"><a href="https://github.com/DoctorWkt/acwj">https://github.com/DoctorWkt/acwj</a></p><p id="1010c02e-6ddd-48bf-b71f-69f2dc1ea109" class="">
+</p><figure id="ace9da46-7753-49b5-a9ce-27071dc492d8" class="image"><a href="DoctorWkt%20acwj%20A%20Compiler%20Writing%20Journey/817898"><img style="width:400px" src="DoctorWkt%20acwj%20A%20Compiler%20Writing%20Journey/817898"/></a></figure><h1 id="856bf671-3e10-499b-ad7b-9d85cd673d06" class="">A Compiler Writing Journey</h1><p id="62f49ef9-3d84-4ac1-8812-bb2289c2440b" class="">In this Github repository, I&#x27;m documenting my journey to write a self-compiling compiler for a subset of the C language. I&#x27;m also writing out the details so that, if you want to follow along, there will be an explanation of what I did, why, and with some references back to the theory of compilers.</p><p id="376fe277-39b2-4870-a53a-f32415c88b2e" class="">But not too much theory, I want this to be a practical journey.</p><p id="f10ce33c-2fc6-414e-a918-e3c24fc958e6" class="">Here are the steps I&#x27;ve taken so far:</p><ul id="5287beb9-7150-41ad-855b-a0e49a0243c6" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/00_Introduction/Readme.md">Part 0</a>: Introduction to the Journey</li></ul><ul id="a379ec44-bd41-4abb-936a-86b08f933c4e" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/01_Scanner/Readme.md">Part 1</a>: Introduction to Lexical Scanning</li></ul><ul id="7f8b8100-4892-4d8e-aa8e-e1fc712183a3" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/02_Parser/Readme.md">Part 2</a>: Introduction to Parsing</li></ul><ul id="914f1840-4616-4025-84e1-5e5f5dbf2511" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/03_Precedence/Readme.md">Part 3</a>: Operator Precedence</li></ul><ul id="3e1323a5-37f2-40e5-a8cd-4e4d3a5934c4" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/04_Assembly/Readme.md">Part 4</a>: An Actual Compiler</li></ul><ul id="44b96313-b237-4df9-a828-6fbed808ffbb" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/05_Statements/Readme.md">Part 5</a>: Statements</li></ul><ul id="eeb4279e-515c-49d7-b81b-59c953b90958" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/06_Variables/Readme.md">Part 6</a>: Variables</li></ul><ul id="5c8f04f2-f231-4dc3-8e78-9f3ed5974f1b" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/07_Comparisons/Readme.md">Part 7</a>: Comparison Operators</li></ul><ul id="7b758219-db0c-4f7d-8e4d-045543437a4e" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/08_If_Statements/Readme.md">Part 8</a>: If Statements</li></ul><ul id="e56746cc-6e83-4cce-ab8a-a2057db76d4d" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/09_While_Loops/Readme.md">Part 9</a>: While Loops</li></ul><ul id="af79092d-d051-4080-b4d7-7b6308766987" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/10_For_Loops/Readme.md">Part 10</a>: For Loops</li></ul><ul id="ee0a2a0c-0022-4a71-87c4-13f4d7c5e968" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/11_Functions_pt1/Readme.md">Part 11</a>: Functions, part 1</li></ul><ul id="5ba42685-5138-4b7e-91a1-c9298899a9ef" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/12_Types_pt1/Readme.md">Part 12</a>: Types, part 1</li></ul><ul id="dfcf6c69-3491-4a32-b230-1514f49478cc" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/13_Functions_pt2/Readme.md">Part 13</a>: Functions, part 2</li></ul><ul id="3db9f548-585c-4d8c-84a7-f1737002c3b9" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/14_ARM_Platform/Readme.md">Part 14</a>: Generating ARM Assembly Code</li></ul><ul id="42f11ffb-5b7c-451b-9c42-999d82b79a37" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/15_Pointers_pt1/Readme.md">Part 15</a>: Pointers, part 1</li></ul><ul id="9a705064-1320-4f25-9dbd-6eeb0a074111" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/16_Global_Vars/Readme.md">Part 16</a>: Declaring Global Variables Properly</li></ul><ul id="76298d45-9b18-4dc3-8761-147b71aa8a9e" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/17_Scaling_Offsets/Readme.md">Part 17</a>: Better Type Checking and Pointer Offsets</li></ul><ul id="c0ee93d1-fe3d-4aa3-a27e-6d225a6cec2b" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/18_Lvalues_Revisited/Readme.md">Part 18</a>: Lvalues and Rvalues Revisited</li></ul><ul id="d3ba7b59-fa35-48d5-8356-b3f984fe189c" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/19_Arrays_pt1/Readme.md">Part 19</a>: Arrays, part 1</li></ul><ul id="47f371a7-ea7c-427d-9aa1-0f08714ca4f9" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/20_Char_Str_Literals/Readme.md">Part 20</a>: Character and String Literals</li></ul><ul id="ba3806e9-7ce3-4a7c-a778-f88ac99240c5" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/21_More_Operators/Readme.md">Part 21</a>: More Operators</li></ul><ul id="ae36b0d8-06b3-40ab-8264-d50c1053a2c0" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/22_Design_Locals/Readme.md">Part 22</a>: Design Ideas for Local Variables and Function Calls</li></ul><ul id="b98d2632-4624-4d28-b3c5-db3ad8e2c054" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/23_Local_Variables/Readme.md">Part 23</a>: Local Variables</li></ul><ul id="6e6b018e-0cd0-49a7-9b11-c236a48f9dec" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/24_Function_Params/Readme.md">Part 24</a>: Function Parameters</li></ul><ul id="230187cd-b31d-48e1-9569-f3d258ebc2d3" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/25_Function_Arguments/Readme.md">Part 25</a>: Function Calls and Arguments</li></ul><ul id="cd8bc044-acdc-4000-8eaf-559491c2169c" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/26_Prototypes/Readme.md">Part 26</a>: Function Prototypes</li></ul><ul id="b65e162a-99be-443c-9691-72ac4cb78ecf" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/27_Testing_Errors/Readme.md">Part 27</a>: Regression Testing and a Nice Surprise</li></ul><ul id="c13846c8-be96-4a64-a632-4abbff15d56f" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/28_Runtime_Flags/Readme.md">Part 28</a>: Adding More Run-time Flags</li></ul><ul id="c6e90e94-c630-4547-88ff-a49b9b881dbc" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/29_Refactoring/Readme.md">Part 29</a>: A Bit of Refactoring</li></ul><ul id="3560e982-bb87-412a-bb04-7b792553bf08" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/30_Design_Composites/Readme.md">Part 30</a>: Designing Structs, Unions and Enums</li></ul><ul id="6c93e048-d6b5-483b-8beb-512ca23e0a94" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/31_Struct_Declarations/Readme.md">Part 31</a>: Implementing Structs, Part 1</li></ul><ul id="ec5f21f3-5177-4bf7-8880-3e01dd4664a0" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/32_Struct_Access_pt1/Readme.md">Part 32</a>: Accessing Members in a Struct</li></ul><ul id="6a48537d-dc87-4dc1-9638-c1151023eac6" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/33_Unions/Readme.md">Part 33</a>: Implementing Unions and Member Access</li></ul><ul id="2b65a005-c121-49cf-b1e2-cd5cf0078859" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/34_Enums_and_Typedefs/Readme.md">Part 34</a>: Enums and Typedefs</li></ul><ul id="a9349390-6184-4fb4-b561-31a4eb81cefe" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/35_Preprocessor/Readme.md">Part 35</a>: The C Pre-Processor</li></ul><ul id="7baa0353-5831-4563-8e90-2ede3b877186" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/36_Break_Continue/Readme.md">Part 36</a>: <code>break</code> and <code>continue</code></li></ul><ul id="2a00b193-4a20-406b-90d1-1c3a953b5e19" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/37_Switch/Readme.md">Part 37</a>: Switch Statements</li></ul><ul id="bdc9699c-fe2c-4b8e-a30a-b92deb9b0b72" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/38_Dangling_Else/Readme.md">Part 38</a>: Dangling Else and More</li></ul><ul id="efe33c1a-06c6-443f-be11-2f03660a89bc" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/39_Var_Initialisation_pt1/Readme.md">Part 39</a>: Variable Initialisation, part 1</li></ul><ul id="ba7aebd6-c653-40d1-8b34-12e4a8779248" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/40_Var_Initialisation_pt2/Readme.md">Part 40</a>: Global Variable Initialisation</li></ul><ul id="c785ddd0-aa4f-40e6-b1ea-a7c21b4a3ddb" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/41_Local_Var_Init/Readme.md">Part 41</a>: Local Variable Initialisation</li></ul><ul id="2d53c25f-2373-4e50-8b66-430b85993c2f" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/42_Casting/Readme.md">Part 42</a>: Type Casting and NULL</li></ul><ul id="40744dec-c4ef-4b9e-b62e-328a389a706c" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/43_More_Operators/Readme.md">Part 43</a>: Bugfixes and More Operators</li></ul><ul id="222eec83-f050-464d-975a-7ad0dd853420" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/44_Fold_Optimisation/Readme.md">Part 44</a>: Constant Folding</li></ul><ul id="ad5ad9c8-eab3-4428-83f5-3f4502c150fc" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/45_Globals_Again/Readme.md">Part 45</a>: Global Variable Declarations, revisited</li></ul><ul id="eeaf0277-263e-41fc-8a74-1766d573d48b" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/46_Void_Functions/Readme.md">Part 46</a>: Void Function Parameters and Scanning Changes</li></ul><ul id="54eda793-0ab1-4862-b15c-b63df7320e17" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/47_Sizeof/Readme.md">Part 47</a>: A Subset of <code>sizeof</code></li></ul><ul id="c0b2f883-16a4-4fd3-a758-fec8c08b134b" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/48_Static/Readme.md">Part 48</a>: A Subset of <code>static</code></li></ul><ul id="e91710fe-c6a7-4297-96ae-e13334f0d3c6" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/49_Ternary/Readme.md">Part 49</a>: The Ternary Operator</li></ul><ul id="6c823601-4d44-4ec5-94c4-8250fcbf3dae" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/50_Mop_up_pt1/Readme.md">Part 50</a>: Mopping Up, part 1</li></ul><ul id="17f47d21-edb5-4ad8-a1e7-70d1bff842d2" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/51_Arrays_pt2/Readme.md">Part 51</a>: Arrays, part 2</li></ul><ul id="cd58efda-3be6-45c7-82e0-00a8487d7794" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/52_Pointers_pt2/Readme.md">Part 52</a>: Pointers, part 2</li></ul><ul id="c3714d7e-2404-46bb-9c6a-10ef7d564436" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/53_Mop_up_pt2/Readme.md">Part 53</a>: Mopping Up, part 2</li></ul><ul id="4049089c-6969-4821-8af7-e554817c0099" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/54_Reg_Spills/Readme.md">Part 54</a>: Spilling Registers</li></ul><ul id="0f45920e-6129-4bb3-9c98-638c94271a36" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/55_Lazy_Evaluation/Readme.md">Part 55</a>: Lazy Evaluation</li></ul><ul id="7bb9dbdb-8646-4c6f-8422-e6f60dd0759c" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/56_Local_Arrays/Readme.md">Part 56</a>: Local Arrays</li></ul><ul id="97129fe4-8a37-4d43-a533-1b81e440161a" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/57_Mop_up_pt3/Readme.md">Part 57</a>: Mopping Up, part 3</li></ul><ul id="d4615a92-42aa-467a-b8ba-8830044408fb" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/58_Ptr_Increments/Readme.md">Part 58</a>: Fixing Pointer Increments/Decrements</li></ul><ul id="143c84de-7744-46c2-89b3-b8bd6c21c5ce" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/59_WDIW_pt1/Readme.md">Part 59</a>: Why Doesn&#x27;t It Work, part 1</li></ul><ul id="f0fba5f9-6784-45fc-8509-47c6800a4a85" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/60_TripleTest/Readme.md">Part 60</a>: Passing the Triple Test</li></ul><ul id="25410241-9aa2-47df-b364-1539c1fd58f3" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/61_What_Next/Readme.md">Part 61</a>: What&#x27;s Next?</li></ul><ul id="de039af1-d518-428f-9d13-43b9103cc5d2" class="bulleted-list"><li><a href="https://github.com/DoctorWkt/acwj/blob/master/62_Cleanup/Readme.md">Part 62</a>: Code Cleanup</li></ul><p id="d4500e0a-96a2-4553-be17-fd6db35f70c3" class="">There isn&#x27;t a schedule or timeline for the future parts, so just keep checking back here to see if I&#x27;ve written any more.</p><h2 id="5de4a837-aab3-4790-b38b-f7557f972eb1" class="">Copyrights</h2><p id="d58df7b5-1562-4ec1-82c9-f45e92674c3b" class="">I have borrowed some of the code, and lots of ideas, from the <a href="http://www.t3x.org/subc/">SubC</a> compiler written by Nils M Holm. His code is in the public domain. I think that my code is substantially different enough that I can apply a different license to my code.</p><p id="54b60622-0329-4e91-88b1-bb80b6ded928" class="">Unless otherwise noted,</p><ul id="c3ea1104-2eb3-4e45-985d-588c29d9886e" class="bulleted-list"><li>all source code and scripts are (c) Warren Toomey under the GPL3 license.</li></ul><ul id="72cb44d3-a3c5-4089-bb2e-a985b67ed93c" class="bulleted-list"><li>all non-source code documents (e.g. English documents, image files) are (c) Warren Toomey under the Creative Commons BY-NC-SA 4.0 license.</li></ul></div></article></body></html>
