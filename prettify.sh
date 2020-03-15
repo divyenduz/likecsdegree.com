@@ -1,0 +1,1 @@
+npx prettier --write 'Formal*/**/*.html'; npx prettier --write 'index.html'
