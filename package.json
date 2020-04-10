@@ -1,0 +1,16 @@
+{
+  "name": "likecsdegree.com",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:divyenduz/likecsdegree.com.git",
+  "author": "Divyendu Singh <singh@prisma.io>",
+  "license": "MIT",
+  "devDependencies": {
+    "codelift": "^1.0.11",
+    "serve": "^11.3.0"
+  },
+  "scripts": {
+    "start": "serve -p 3000 -c serve.json",
+    "dev": "yarn codelift start"
+  }
+}
